@@ -1,3 +1,5 @@
+// By Roni Kaufman
+
 int thickness = 8; // thickness of the lines between the cubes
 
 int[][] colors = {{0, 0, 0}, {255, 255, 255}, {0, 0, 250}, {255, 200, 0}, {250, 0, 0}}; // colors used, including black and white
@@ -27,15 +29,16 @@ void keyPressed() {
     arrayCopy(probColors, startingProbColors);
     redraw();
   } else if (key == 's') { // save image
-    save("mondrian.jpg");
+    String timestamp = getTimestamp();
+    save("mondrian_" + timestamp + ".jpg");
   }
 }
 
 
 /* Draws a generated Mondrian-style picture recursively
- w the width, h the height, (x,y) the top-left corner
- prob the probability to divide this rectangle into 2 new rectangles
- vertical = true if we must divide vertically, false if horizontally */
+   w the width, h the height, (x,y) the top-left corner
+   prob the probability to divide this rectangle into 2 new rectangles
+   vertical = true if we must divide vertically, false if horizontally */
 
 void mondrianRecursion(int w, int h, int x, int y, float prob, boolean vertical) {
   if (random(1) < prob) { // we must divide again
@@ -60,7 +63,7 @@ void mondrianRecursion(int w, int h, int x, int y, float prob, boolean vertical)
 /* Choose a color randomly using the probability distribution of probColors */
 
 int chooseColor() {
-  float r = random(1), sum=0;
+  float r = random(1), sum = 0;
   int i = 0;
   while (sum <= r) {
     sum += probColors[i++];
@@ -70,7 +73,7 @@ int chooseColor() {
 
 
 /* Changes probColors during the execution in order not to have too much of a certain color
- Reduces the probability of the last used color and redistributes it uniformly to all the others */
+   Reduces the probability of the last used color and redistributes it uniformly to all the others */
 
 void newProbColors(int i) {
   float x = probColors[i] * probReducingColors[i];
@@ -81,4 +84,35 @@ void newProbColors(int i) {
       probColors[k]=probColors[k] + x/(nbColors-1); // increase all the other ones
     }
   }
+}
+
+
+/* Returns a timestamp of the form [year][month][day][hour][minute][second] 
+   its length is always 14 */
+
+String getTimestamp() {
+  String yea = String.valueOf(year());
+  String mon = String.valueOf(month());
+  if (mon.length() == 1) {
+    mon = "0" + mon;
+  }
+  String day = String.valueOf(day());
+  if (day.length() == 1) {
+    day = "0" + day;
+  }
+  String hou = String.valueOf(hour());
+  if (hou.length() == 1) {
+    hou = "0" + hou;
+  }
+  String min = String.valueOf(minute());
+  if (min.length() == 1) {
+    min = "0" + min;
+  }
+  String sec = String.valueOf(second());
+  if (sec.length() == 1) {
+    sec = "0" + sec;
+  }
+  
+  String s = yea + mon + day + hou + min + sec;
+  return s;
 }
